@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Cutter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #120e0e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #c1c1c1;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            background-color: #15949b;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #d8c035;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .result a {
+            text-decoration: none;
+            color: #583da4;
+        }
+        .result a:hover {
+            text-decoration: underline;
+        }
+        .result-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 300px;
+            text-align: center;
+        }
+        .result-popup input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .result-popup button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .result-popup button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Link cutter by Nick</h1>
+        <form id="shortenForm">
+            <label for="url">Enter URL:</label>
+            <input type="text" id="url" name="url" placeholder="http://example.com" required>
+
+            <label for="custom_id">Custom Short URL (optional):</label>
+            <input type="text" id="custom_id" name="custom_id" placeholder="Custom ID (mylink123)">
+
+            <input type="submit" value="Cut!">
+        </form>
+    </div>
+
+    <div id="resultPopup" class="result-popup">
+        <p>Shortened URL:</p>
+        <input type="text" id="shortenedUrl" readonly>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        document.getElementById('shortenForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const url = document.getElementById('url').value;
+            const custom_id = document.getElementById('custom_id').value;
+
+            const formData = new FormData();
+            formData.append('url', url);
+            formData.append('custom_id', custom_id);
+
+            const response = await fetch('/shorten/', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.shortened_url) {
+                document.getElementById('shortenedUrl').value = data.shortened_url;
+                document.getElementById('resultPopup').style.display = 'block';
+            }
+        });
+
+        function closePopup() {
+            document.getElementById('resultPopup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
